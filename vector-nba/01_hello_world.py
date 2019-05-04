@@ -21,9 +21,14 @@ Make Vector say 'Hello World' in this simple Vector SDK example program.
 
 import anki_vector
 import nba_api
+from nba_api.stats.library import playbyplayregex
+
+from anki_vector.events import Events
 
 def main():
     
+    from anki_vector.util import degrees
+
     # Select the dictionary for the Pacers, which contains their team ID
     from nba_api.stats.static import teams
     pacers = teams.find_team_by_abbreviation('IND')
@@ -45,13 +50,22 @@ def main():
     plays = playbyplay.PlayByPlay(game_id).get_normalized_dict()['PlayByPlay']
     
     import nba_natural_language
+    import nba_play_a
+    
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
+         # If necessary, move Vector's Head and Lift to make it easy to see his face
+        robot.behavior.set_head_angle(degrees(45.0))
+
+       # p = nba_play_a.Play(robot)
+        #p.steal("")
+
         for play in plays:
             home = play["HOMEDESCRIPTION"]
             visitor = play["VISITORDESCRIPTION"]
             if home != None:
-                robot.say_text(nba_natural_language.translate_playbyplay(home))
+                
+                #robot.say_text(nba_natural_language.translate_playbyplay(home))
             elif visitor != None:
                 robot.say_text(nba_natural_language.translate_playbyplay(visitor)) 
             else:
